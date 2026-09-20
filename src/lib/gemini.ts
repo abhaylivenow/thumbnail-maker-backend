@@ -11,9 +11,17 @@ export type GeminiResult = {
   style: string;
 };
 
-// Stub — replace with the real Gemini call.
-export async function callGemini(imageParts: ImagePart[]): Promise<GeminiResult> {
-  await new Promise((resolve) => setTimeout(resolve, 500));
-  console.log(`callGemini stub received ${imageParts.length} image(s)`);
-  return { frameChoice: 0, text: "sample", style: "bold" };
+
+export async function callGemini(imageParts: { inlineData: { data: string; mimeType: string } }[]) {
+  await new Promise((resolve) => setTimeout(resolve, 500)); // simulate network delay
+
+  const randomIndex = Math.floor(Math.random() * imageParts.length);
+
+  return {
+    frameChoice: randomIndex,
+    totalFramesReceived: imageParts.length,
+    text: "Sample hook text",
+    style: "bold",
+    color: "#FF3B30",
+  };
 }

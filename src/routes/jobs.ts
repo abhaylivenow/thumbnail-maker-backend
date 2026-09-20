@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { Router } from "express";
 import multer from "multer";
 import { supabase } from "../lib/supabase";
@@ -23,7 +24,7 @@ const upload = multer({
 
 const router = Router();
 
-router.post("/jobs", upload.array("frames", MAX_FILES), async (req, res) => {
+router.post("/", upload.array("frames", MAX_FILES), async (req, res) => {
   const files = (req.files as Express.Multer.File[] | undefined) ?? [];
 
   if (files.length === 0) {
@@ -31,20 +32,17 @@ router.post("/jobs", upload.array("frames", MAX_FILES), async (req, res) => {
   }
 
   const userId = req.user?.id ?? PLACEHOLDER_USER_ID;
+  const jobId = randomUUID();
 
   // Create the job row before any processing starts.
-  const { data: job, error: insertError } = await supabase
+  const { error: insertError } = await supabase
     .from("jobs")
-    .insert({ user_id: userId, status: "processing" })
-    .select("id")
-    .single();
+    .insert({ id: jobId, user_id: userId, status: "processing" });
 
-  if (insertError || !job) {
+  if (insertError) {
     console.error("Failed to create job:", insertError);
     return res.status(500).json({ error: "Failed to create job" });
   }
-
-  const jobId = job.id as string;
 
   try {
     const imageParts: ImagePart[] = files.map((file) => ({
@@ -54,7 +52,19 @@ router.post("/jobs", upload.array("frames", MAX_FILES), async (req, res) => {
       },
     }));
 
-    const result = await callGemini(imageParts);
+    const geminiResult = await callGemini(imageParts);
+
+    // Placeholder for real rendering: hand back the chosen input frame untouched.
+    const chosenFrame = files[geminiResult.frameChoice];
+    if (!chosenFrame) {
+      throw new Error(`frameChoice ${geminiResult.frameChoice} is out of range`);
+    }
+
+    const result = {
+      ...geminiResult,
+      thumbnailBase64: chosenFrame.buffer.toString("base64"),
+      thumbnailMimeType: chosenFrame.mimetype,
+    };
 
     const { error: updateError } = await supabase
       .from("jobs")

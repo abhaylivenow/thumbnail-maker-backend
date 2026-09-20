@@ -17,7 +17,7 @@ app.get("/test-db", async (req, res) => {
   res.json({ connected: true, sampleData: data });
 });
 
-app.use(jobsRouter);
+app.use("/jobs", jobsRouter);
 
 // Turns multer/upload errors into clean 400s instead of a generic 500.
 app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {
