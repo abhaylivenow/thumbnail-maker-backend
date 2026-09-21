@@ -15,7 +15,7 @@ const IMAGE_MODEL = "gpt-image-2.5-sunburst";
 
 // Portrait, sized for a Short/Reel cover.
 // Width and height must both be divisible by 16 — 1080 is not, so 1088 stands in for it.
-const IMAGE_SIZE = "1088x1920";
+const IMAGE_SIZE = "768x1360";
 const OUTPUT_FORMAT = "png";
 
 const THUMBNAIL_PROMPT = `So these are the probable candidates for a YouTube short video and these are screenshots, I want you to create this into a YouTube thumbnail of dimension 9:16, judge yourself based on images what this image is about and create me a thumbnail`;
@@ -49,7 +49,7 @@ export async function generateThumbnail(
     type: "image_generation",
     model: IMAGE_MODEL,
     size: IMAGE_SIZE,
-    quality: "high",
+    quality: "medium",
     output_format: OUTPUT_FORMAT,
     // No input_fidelity here: gpt-image-2.5-sunburst rejects it outright (400).
     // Reference adherence comes from the prompt instead.
