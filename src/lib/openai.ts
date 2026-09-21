@@ -18,22 +18,7 @@ const IMAGE_MODEL = "gpt-image-2.5-sunburst";
 const IMAGE_SIZE = "1088x1920";
 const OUTPUT_FORMAT = "png";
 
-const THUMBNAIL_PROMPT = `Generate a single high-quality thumbnail image for a short-form video.
-
-Use all provided images as visual references from the same finished video.
-
-Create one brand-new thumbnail image, not a collage and not simply a copy of one frame.
-
-Requirements:
-- Stay grounded in the real footage.
-- Preserve the identity and recognizable appearance of people in the reference images.
-- Preserve important clothing, objects, environment, and scene context.
-- Create a stronger, cleaner and more eye-catching composition suitable for a YouTube Short/Reel cover.
-- The main subject should be immediately understandable on a mobile screen.
-- Avoid an obviously synthetic or generic AI-generated look.
-- Do not invent unrelated people, objects, locations, or story elements.
-- Do not add any text, captions, logos, watermarks, UI elements, or typography.
-- Return one final thumbnail image.`;
+const THUMBNAIL_PROMPT = `So these are the probable candidates for a YouTube short video and these are screenshots, I want you to create this into a YouTube thumbnail of dimension 9:16, judge yourself based on images what this image is about and create me a thumbnail`;
 
 export type ThumbnailFrame = {
   buffer: Buffer;
