@@ -14,7 +14,8 @@ const RESPONSES_MODEL = "gpt-5.5";
 const IMAGE_MODEL = "gpt-image-2.5-sunburst";
 
 // Portrait, sized for a Short/Reel cover.
-const IMAGE_SIZE = "1080x1920";
+// Width and height must both be divisible by 16 — 1080 is not, so 1088 stands in for it.
+const IMAGE_SIZE = "1088x1920";
 const OUTPUT_FORMAT = "png";
 
 const THUMBNAIL_PROMPT = `Generate a single high-quality thumbnail image for a short-form video.
@@ -65,8 +66,8 @@ export async function generateThumbnail(
     size: IMAGE_SIZE,
     quality: "high",
     output_format: OUTPUT_FORMAT,
-    // Keeps faces and objects close to the reference frames.
-    input_fidelity: "high",
+    // No input_fidelity here: gpt-image-2.5-sunburst rejects it outright (400).
+    // Reference adherence comes from the prompt instead.
   };
 
   const response = await client.responses.create({

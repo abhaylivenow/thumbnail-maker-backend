@@ -143,6 +143,14 @@ These are deliberate stand-ins, not bugs:
 
 - nodemon watches `.ts`, not `.env`. Env changes need a manual restart.
 
+- Image `size` must have **both** width and height divisible by 16, with an aspect ratio
+  between 1:3 and 3:1. The obvious Shorts size `1080x1920` is rejected (1080 ÷ 16 = 67.5).
+  Use `1088x1920`, or `1152x2048` for exact 9:16.
+
+- `gpt-image-2.5-sunburst` rejects `input_fidelity` with a 400. The SDK types accept it —
+  the union is shared across all image models, so per-model support is only discoverable
+  at runtime. Treat the live API as the source of truth for which params a model takes.
+
 - `POST /jobs` is synchronous — the client waits for the whole model call. Fine against
   the stub, but a real 10–30s call will hit Railway's request timeout. The fix when
   that lands: return 202 with the `jobId`, process in the background, add
