@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { Router } from "express";
 import multer from "multer";
 import { supabase } from "../lib/supabase";
-import { callGemini, ImagePart } from "../lib/gemini";
+import { generateThumbnail } from "../lib/openai";
 
 // Placeholder until auth middleware populates req.user.
 const PLACEHOLDER_USER_ID = "00000000-0000-0000-0000-000000000000";
@@ -45,25 +45,14 @@ router.post("/", upload.array("frames", MAX_FILES), async (req, res) => {
   }
 
   try {
-    const imageParts: ImagePart[] = files.map((file) => ({
-      inlineData: {
-        mimeType: file.mimetype,
-        data: file.buffer.toString("base64"),
-      },
-    }));
-
-    const geminiResult = await callGemini(imageParts);
-
-    // Placeholder for real rendering: hand back the chosen input frame untouched.
-    const chosenFrame = files[geminiResult.frameChoice];
-    if (!chosenFrame) {
-      throw new Error(`frameChoice ${geminiResult.frameChoice} is out of range`);
-    }
+    const { thumbnailBase64, thumbnailMimeType } = await generateThumbnail(
+      files.map((file) => ({ buffer: file.buffer, mimetype: file.mimetype })),
+    );
 
     const result = {
-      ...geminiResult,
-      thumbnailBase64: chosenFrame.buffer.toString("base64"),
-      thumbnailMimeType: chosenFrame.mimetype,
+      thumbnailBase64,
+      thumbnailMimeType,
+      totalFramesReceived: files.length,
     };
 
     const { error: updateError } = await supabase
