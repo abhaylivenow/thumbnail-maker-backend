@@ -14,7 +14,7 @@ const RESPONSES_MODEL = "gpt-5.5";
 const IMAGE_MODEL = "gpt-image-2.5-sunburst";
 
 // Portrait, sized for a Short/Reel cover.
-const IMAGE_SIZE = "1024x1536";
+const IMAGE_SIZE = "1080x1920";
 const OUTPUT_FORMAT = "png";
 
 const THUMBNAIL_PROMPT = `Generate a single high-quality thumbnail image for a short-form video.
